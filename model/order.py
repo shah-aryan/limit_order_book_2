@@ -30,4 +30,7 @@ class Order:
             print("Invalid")
             exit(1)
 
+    def __str__(self):
+        return f"Order ID: {self.order_id}, Customer ID: {self.customer_id}, Volume: {self.order_volume}, Ticker: {self.ticker}, Price: {self.price}, Time: {self.time_of_order}, Type: {self.order_type}, Buy/Sell: {self.buy_or_sell}"
+
 

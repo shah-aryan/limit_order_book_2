@@ -3,8 +3,9 @@ from test.run_all_tests import run_all_tests
 from model.exchange import Exchange
 from controller.run_exchange import run_exchange
 import json
+from util.process_order import process_order
 
-def read_orders(inputFile, dict):
+def read_orders(inputFile, my_dict):
     #REQUIRED: input file is json
     with open(inputFile, "r") as json_file:
         data = json.load(json_file)
@@ -16,11 +17,14 @@ def read_orders(inputFile, dict):
         #if one does exist it adds the order to the exchange
         exchange = order["ticker"]
         
-        if exchange in dict:
+        if exchange not in my_dict:
             e = Exchange(exchange)
-            e.add_order(order)
-        else:
-            dict["exchange"].add_order(order)
+            my_dict[exchange] = e
+        
+        o = process_order(order)
+        my_dict[exchange].add_order(o)
+        my_dict[exchange].handle_order()
+        
 
 
 def main():
@@ -42,8 +46,19 @@ def main():
         print ("too many arguments")
         
     
-    
+    #testing read_orders and Exchange print
     read_orders(args[0], my_dict)
+
+    for ticker in my_dict:
+        e = my_dict[ticker]
+        print(ticker)
+        print("buys")
+        while not e.buys.empty():
+            print(e.buys.get())
+        print("\n\nsells")
+        while not e.sells.empty():
+            print(e.sells.get())
+        print("\n\n")
 
     # exchange = Exchange()
     # run_exchange(exchange)
